@@ -7,17 +7,10 @@ pipeline {
         script {
           withCredentials([usernamePassword(credentialsId: 'ACR', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
             sh 'docker login -u $ACR_USER -p $ACR_PASSWORD https://amircontainerregistry.azurecr.io'
-            // build image
-            def image = docker.build "amircontainerregistry.azurecr.io/samples/testci"
-            // push image
+            def image = docker.build "amircontainerregistry.azurecr.io/samples/testci:${BUILD_TIMESTAMP}"
             image.push()
           }
         }
-      }
-    }
-    stage("test") {
-      steps {
-        echo 'testing'
       }
     }
     stage("deploy") {

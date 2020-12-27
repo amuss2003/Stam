@@ -11,12 +11,14 @@ spec:
     metadata:
       labels:
         app: azure-testapp
+        build_number: ${BUILD_NUMBER}
     spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
       - name: azure-testapp
-        image: amircontainerregistry.azurecr.io/samples/testci:latest
+        image: amircontainerregistry.azurecr.io/samples/testci:${BUILD_TIMESTAMP}
+        imagePullPolicy: Always
         resources:
           requests:
             cpu: 100m
