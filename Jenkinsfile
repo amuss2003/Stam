@@ -5,7 +5,7 @@ pipeline {
       steps {
         echo 'building'
         script {
-          docker.build amirimage123
+          docker.build "amirimage123"
         }
       }
     }
