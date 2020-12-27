@@ -17,6 +17,7 @@ spec:
       containers:
       - name: azure-testapp
         image: amircontainerregistry.azurecr.io/samples/testci:latest
+        imagePullPolicy: Always
         resources:
           requests:
             cpu: 100m
