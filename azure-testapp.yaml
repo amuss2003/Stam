@@ -17,7 +17,7 @@ spec:
         "beta.kubernetes.io/os": linux
       containers:
       - name: azure-testapp
-        image: amircontainerregistry.azurecr.io/samples/testci:latest
+        image: amircontainerregistry.azurecr.io/samples/testci:${BUILD_NUMBER}-${BUILD_ID}
         imagePullPolicy: Always
         resources:
           requests:
