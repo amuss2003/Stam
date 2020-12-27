@@ -4,6 +4,9 @@ pipeline {
     stage("build") {
       steps {
         echo 'building'
+        script {
+          docker.build amirimage123
+        }
       }
     }
     stage("test") {
