@@ -11,6 +11,7 @@ spec:
     metadata:
       labels:
         app: azure-testapp
+        build_number: ${BUILD_NUMBER}
     spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
