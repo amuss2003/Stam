@@ -4,9 +4,6 @@ pipeline {
     stage("build") {
       steps {
         echo 'building'
-        script {
-          
-        }
       }
     }
     stage("deploy") {
