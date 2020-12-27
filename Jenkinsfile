@@ -22,7 +22,14 @@ pipeline {
     }
     stage("deploy") {
       steps {
-        echo 'deploying'       
+        echo 'deploying' 
+        script {
+          kubernetesDeploy(
+              configs: 'azure-testapp.yaml',
+              kubeconfigId: 'KubeConfig',
+              enableConfigSubstitution: true
+              )           
+        }
       }
     }
   }
