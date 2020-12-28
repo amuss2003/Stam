@@ -42,11 +42,11 @@ pipeline {
         script {
           CONTAINER_IMAGE_NAME = "${ACR_URL}/stable/restapi:${BUILD_TIMESTAMP}"
           echo "building image ${CONTAINER_IMAGE_NAME}"
-          withCredentials([usernamePassword(credentialsId: 'ACR', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
+          /*withCredentials([usernamePassword(credentialsId: 'ACR', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
             sh "docker login -u $ACR_USER -p $ACR_PASSWORD https://${ACR_URL}"
             def image = docker.build "${CONTAINER_IMAGE_NAME}"
             image.push()
-          }
+          }*/
         }
       }
     }
@@ -59,7 +59,7 @@ pipeline {
       steps {
         script {
           if (params.ManualDeployImage != '')
-            CONTAINER_IMAGE_NAME = params.ManualDeployImage
+            env.CONTAINER_IMAGE_NAME = params.ManualDeployImage
           
           echo "deploying image ${CONTAINER_IMAGE_NAME}"
           kubernetesDeploy(
