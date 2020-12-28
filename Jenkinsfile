@@ -51,11 +51,11 @@ pipeline {
       }
     }
     stage("deploy") {
-      when {
+      /*when {
         expression {
           CONTAINER_IMAGE_NAME != 'NoImage' || params.ManualDeployImage != ''
         }
-      }
+      }*/
       steps {
         script {
           //if (params.ManualDeployImage != '')
