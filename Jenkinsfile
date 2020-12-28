@@ -5,7 +5,7 @@ pipeline {
   }
   environment {
     ACR_URL = 'amircontainerregistry.azurecr.io'
-    CONTAINER_IMAGE_NAME = '12345'
+    CONTAINER_IMAGE_NAME = '123456'
   }
   parameters {
     choice(name: 'BuildOptions', choices: ['Only on app files changes', 'Force', 'Skip'], description: 'Build options')
@@ -39,7 +39,7 @@ pipeline {
           CONTAINER_IMAGE_NAME = params.ManualDeployImage
           
           echo "deploying image $CONTAINER_IMAGE_NAME"
-          echo "deploying image $(CONTAINER_IMAGE_NAME)"
+          echo "deploying image ${CONTAINER_IMAGE_NAME}"
           
           /*kubernetesDeploy(
               configs: 'azure-testapp.yaml',
