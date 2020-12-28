@@ -24,6 +24,9 @@ spec:
       containers:
       - name: azure-testapp
         image: ${CONTAINER_IMAGE_NAME}
+        env:
+        - name: TotalForecasts
+          value: 3
         imagePullPolicy: Always
         resources:
           requests:
