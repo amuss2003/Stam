@@ -1,17 +1,9 @@
 def RelevantChangesFound() {
   def changeLogSets = currentBuild.changeSets
   for (int i = 0; i < changeLogSets.size(); i++) {
-      def entries = changeLogSets[i].items
-      for (int j = 0; j < entries.length; j++) {
-          def entry = entries[j]
-          if ("${entry.author}" != "noreply")
+      for (int j = 0; j < changeLogSets[i].items.length; j++) {
+          if ("${changeLogSets[i].items[j].author}" != "noreply")
             return true;
-          //echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
-          /*def files = new ArrayList(entry.affectedFiles)
-          for (int k = 0; k < files.size(); k++) {
-              def file = files[k]
-              echo "  ${file.editType.name} ${file.path}"
-          }*/
       }
   }
   return false;
@@ -20,11 +12,10 @@ def RelevantChangesFound() {
 pipeline {
   agent any
   triggers {
-    pollSCM('H/2 * * * *')
+    pollSCM('H/2 * * * *') // Every 2 minutes
   }
   environment {
     ACR_URL = 'amircontainerregistry.azurecr.io'
-    //CONTAINER_IMAGE_NAME = 'NoImage'
   }
   parameters {
     choice(name: 'BuildOptions', choices: ['Only if git changes occured', 'Force', 'Skip'], description: 'Build options')
@@ -42,11 +33,11 @@ pipeline {
         script {
           env.CONTAINER_IMAGE_NAME = "${ACR_URL}/stable/restapi:${BUILD_TIMESTAMP}"
           echo "building image ${CONTAINER_IMAGE_NAME}"
-          /*withCredentials([usernamePassword(credentialsId: 'ACR', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
+          withCredentials([usernamePassword(credentialsId: 'ACR', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
             sh "docker login -u $ACR_USER -p $ACR_PASSWORD https://${ACR_URL}"
             def image = docker.build "${CONTAINER_IMAGE_NAME}"
             image.push()
-          }*/
+          }
         }
       }
     }
