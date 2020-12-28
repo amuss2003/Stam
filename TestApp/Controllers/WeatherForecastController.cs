@@ -11,7 +11,7 @@ namespace TestApp.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        public const int TotalCount = 20;
+        public static int TotalCount = Convert.ToInt32(Environment.GetEnvironmentVariable("TotalForecasts") ?? "20");
         
         private static readonly string[] Summaries = new[]
         {
