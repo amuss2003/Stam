@@ -15,8 +15,8 @@ pipeline {
     stage("build") {
       when {
         expression {
-          params.BuildOptions == 'Force' ||
-          (params.BuildOptions == 'Only on app files changes' && changeset "TestApp*/**")
+          params.BuildOptions == 'Force' /*||
+          (params.BuildOptions == 'Only on app files changes' && changeset "TestApp*/**")*/
         }
       }
       steps {      
