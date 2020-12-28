@@ -19,9 +19,9 @@ pipeline {
         }
       }
       steps {      
-        env.CONTAINER_IMAGE_NAME = "${ACR_URL}/stable/restapi:${BUILD_TIMESTAMP}"
-        echo "building image ${CONTAINER_IMAGE_NAME}"
         script {
+          env.CONTAINER_IMAGE_NAME = "${ACR_URL}/stable/restapi:${BUILD_TIMESTAMP}"
+          echo "building image ${CONTAINER_IMAGE_NAME}"
           /*withCredentials([usernamePassword(credentialsId: 'ACR', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
             sh "docker login -u $ACR_USER -p $ACR_PASSWORD https://${ACR_URL}"
             def image = docker.build "${CONTAINER_IMAGE_NAME}"
