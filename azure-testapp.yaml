@@ -17,7 +17,7 @@ spec:
         "beta.kubernetes.io/os": linux
       containers:
       - name: azure-testapp
-        image: ${ACR_URL}/stable/restapi:${BUILD_TIMESTAMP}
+        image: ${CONTAINER_IMAGE_NAME}
         imagePullPolicy: Always
         resources:
           requests:
