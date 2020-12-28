@@ -17,7 +17,7 @@ namespace TestApp.UnitTests
         {
             Console.WriteLine("Test is running");
             var weatherData = new WeatherForecastController(null).Get();
-            Assert.IsTrue(weatherData.Count() == 3);
+            Assert.IsTrue(weatherData.Count() == WeatherForecastController.TotalCount);
         }
     }
 }
