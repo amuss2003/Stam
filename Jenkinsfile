@@ -4,7 +4,9 @@ def RelevantChangesFound() {
       def entries = changeLogSets[i].items
       for (int j = 0; j < entries.length; j++) {
           def entry = entries[j]
-          echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
+          if (entry.author != "noreply")
+            return true;
+          //echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
           /*def files = new ArrayList(entry.affectedFiles)
           for (int k = 0; k < files.size(); k++) {
               def file = files[k]
@@ -52,7 +54,7 @@ pipeline {
       steps {
         script {
           //if (params.ManualDeployImage != '')
-            CONTAINER_IMAGE_NAME = params.ManualDeployImage
+          //  CONTAINER_IMAGE_NAME = params.ManualDeployImage
 
           if (CONTAINER_IMAGE_NAME != '') {
             echo "deploying image ${CONTAINER_IMAGE_NAME}"
