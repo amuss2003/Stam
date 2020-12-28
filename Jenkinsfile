@@ -24,7 +24,7 @@ pipeline {
   }
   environment {
     ACR_URL = 'amircontainerregistry.azurecr.io'
-    CONTAINER_IMAGE_NAME = ''
+    CONTAINER_IMAGE_NAME = 'NoImage'
   }
   parameters {
     choice(name: 'BuildOptions', choices: ['Only if git changes occured', 'Force', 'Skip'], description: 'Build options')
@@ -56,7 +56,7 @@ pipeline {
           //if (params.ManualDeployImage != '')
           //  CONTAINER_IMAGE_NAME = params.ManualDeployImage
 
-          if (CONTAINER_IMAGE_NAME != '') {
+          if (CONTAINER_IMAGE_NAME != 'NoImage') {
             echo "deploying image ${CONTAINER_IMAGE_NAME}"
           /*kubernetesDeploy(
               configs: 'azure-testapp.yaml',
