@@ -15,20 +15,19 @@ pipeline {
     stage("build") {
       when {
         expression {
-          params.BuildOptions == 'Force' /*||
-          (params.BuildOptions == 'Only on app files changes' && changeset "TestApp*/**")*/
+          params.BuildOptions == 'Force'
         }
       }
       steps {      
         env.CONTAINER_IMAGE_NAME = "${ACR_URL}/stable/restapi:${BUILD_TIMESTAMP}"
         echo "building image ${CONTAINER_IMAGE_NAME}"
-        /*script {
-          withCredentials([usernamePassword(credentialsId: 'ACR', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
+        script {
+          /*withCredentials([usernamePassword(credentialsId: 'ACR', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
             sh "docker login -u $ACR_USER -p $ACR_PASSWORD https://${ACR_URL}"
             def image = docker.build "${CONTAINER_IMAGE_NAME}"
             image.push()
-          }
-        }*/
+          }*/
+        }
       }
     }
     stage("deploy") {
