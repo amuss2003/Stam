@@ -41,7 +41,6 @@ metadata:
   name: azure-testapp
   namespace: testapp
 spec:
-  type: LoadBalancer
   ports:
   - port: 80
   selector:
