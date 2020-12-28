@@ -8,15 +8,15 @@ pipeline {
     CONTAINER_IMAGE_NAME = ''
   }
   parameters {
-    choice(name: 'BuildOptions', choices: ['Only on app files changes', 'Force', 'Skip'], description: 'Build options')
+    choice(name: 'BuildOptions', choices: ['Only if git changes occured', 'Force', 'Skip'], description: 'Build options')
     string(name: 'ManualDeployImage', defaultValue: '', description: 'Manually deploy image name (leave blank to skip deploy)')
   }
-  String changesetPathRegex = "TestApp*/**"
   stages {
     stage("build") {
       when {
         expression {
-          params.BuildOptions == 'Force' || changeset changesetPathRegex
+          params.BuildOptions == 'Force' || 
+            (params.BuildOptions == 'Only if git changes occured' && getGitChanges())
         }
       }
       steps {      
@@ -36,13 +36,18 @@ pipeline {
         script {
           if (params.ManualDeployImage != '')
             CONTAINER_IMAGE_NAME = params.ManualDeployImage
-          
-          echo "deploying image ${CONTAINER_IMAGE_NAME}"
+
+          if (CONTAINER_IMAGE_NAME != '') {
+            echo "deploying image ${CONTAINER_IMAGE_NAME}"
           /*kubernetesDeploy(
               configs: 'azure-testapp.yaml',
               kubeconfigId: 'KubeConfig',
               enableConfigSubstitution: true
-              )   */        
+              )   */
+          }
+          else { 
+            echo "no image to deploy"
+          }
         }
       }
     }
