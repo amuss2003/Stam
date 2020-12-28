@@ -16,11 +16,12 @@ pipeline {
       when {
         expression {
           params.BuildOptions == 'Force' || 
-            (params.BuildOptions == 'Only if git changes occured' && getGitChanges())
+            (params.BuildOptions == 'Only if git changes occured')
         }
       }
       steps {      
         script {
+          println(currentBuild.changeSets)
           CONTAINER_IMAGE_NAME = "${ACR_URL}/stable/restapi:${BUILD_TIMESTAMP}"
           echo "building image ${CONTAINER_IMAGE_NAME}"
           /*withCredentials([usernamePassword(credentialsId: 'ACR', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
@@ -34,7 +35,7 @@ pipeline {
     stage("deploy") {
       steps {
         script {
-          if (params.ManualDeployImage != '')
+          //if (params.ManualDeployImage != '')
             CONTAINER_IMAGE_NAME = params.ManualDeployImage
 
           if (CONTAINER_IMAGE_NAME != '') {
