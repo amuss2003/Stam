@@ -51,22 +51,22 @@ pipeline {
       }
     }
     stage("deploy") {
+      when {
+        expression {
+          CONTAINER_IMAGE_NAME != 'NoImage' || params.ManualDeployImage != ''
+        }
+      }
       steps {
         script {
-          //if (params.ManualDeployImage != '')
-          //  CONTAINER_IMAGE_NAME = params.ManualDeployImage
-
-          if (CONTAINER_IMAGE_NAME != 'NoImage') {
-            echo "deploying image ${CONTAINER_IMAGE_NAME}"
+          if (params.ManualDeployImage != '')
+            CONTAINER_IMAGE_NAME = params.ManualDeployImage
+          
+          echo "deploying image ${CONTAINER_IMAGE_NAME}"
           /*kubernetesDeploy(
               configs: 'azure-testapp.yaml',
               kubeconfigId: 'KubeConfig',
               enableConfigSubstitution: true
               )   */
-          }
-          else { 
-            echo "no image to deploy"
-          }
         }
       }
     }
