@@ -11,11 +11,12 @@ pipeline {
     choice(name: 'BuildOptions', choices: ['Only on app files changes', 'Force', 'Skip'], description: 'Build options')
     string(name: 'ManualDeployImage', defaultValue: '', description: 'Manually deploy image name (leave blank to skip deploy)')
   }
+  String changesetPathRegex = "TestApp*/**"
   stages {
     stage("build") {
       when {
         expression {
-          params.BuildOptions == 'Force' || changeset "TestApp*/**"
+          params.BuildOptions == 'Force' || changeset changesetPathRegex
         }
       }
       steps {      
