@@ -5,7 +5,7 @@ pipeline {
   }
   environment {
     ACR_URL = 'amircontainerregistry.azurecr.io'
-    CONTAINER_IMAGE_NAME = '123456'
+    CONTAINER_IMAGE_NAME = ''
   }
   parameters {
     choice(name: 'BuildOptions', choices: ['Only on app files changes', 'Force', 'Skip'], description: 'Build options')
@@ -15,12 +15,12 @@ pipeline {
     stage("build") {
       when {
         expression {
-          params.BuildOptions == 'Force'
+          params.BuildOptions == 'Force' || changeset "TestApp*/**"
         }
       }
       steps {      
         script {
-          env.CONTAINER_IMAGE_NAME = "${ACR_URL}/stable/restapi:${BUILD_TIMESTAMP}"
+          CONTAINER_IMAGE_NAME = "${ACR_URL}/stable/restapi:${BUILD_TIMESTAMP}"
           echo "building image ${CONTAINER_IMAGE_NAME}"
           /*withCredentials([usernamePassword(credentialsId: 'ACR', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
             sh "docker login -u $ACR_USER -p $ACR_PASSWORD https://${ACR_URL}"
@@ -33,14 +33,10 @@ pipeline {
     stage("deploy") {
       steps {
         script {
-          echo "deploying image $CONTAINER_IMAGE_NAME"
+          if (params.ManualDeployImage != '')
+            CONTAINER_IMAGE_NAME = params.ManualDeployImage
           
-          //if (params.ManualDeployImage != '')
-          CONTAINER_IMAGE_NAME = params.ManualDeployImage
-          
-          echo "deploying image $CONTAINER_IMAGE_NAME"
           echo "deploying image ${CONTAINER_IMAGE_NAME}"
-          
           /*kubernetesDeploy(
               configs: 'azure-testapp.yaml',
               kubeconfigId: 'KubeConfig',
