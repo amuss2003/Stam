@@ -58,7 +58,7 @@ pipeline {
       }
       steps {
         script {
-          if (params.ManualDeployImage != '')
+          //if (params.ManualDeployImage != '')
             env.CONTAINER_IMAGE_NAME = params.ManualDeployImage
           
           echo "deploying image ${CONTAINER_IMAGE_NAME}"
