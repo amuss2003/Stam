@@ -1,9 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: testapp
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: azure-testapp
+  namespace: testapp
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: azure-testapp
@@ -33,9 +39,23 @@ apiVersion: v1
 kind: Service
 metadata:
   name: azure-testapp
+  namespace: testapp
 spec:
-  type: LoadBalancer
   ports:
   - port: 80
   selector:
     app: azure-testapp
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: testapp-ingress
+  namespace: testapp
+spec:
+  rules:
+  - host: musstech.ml
+    http:
+      paths:
+      - backend:
+          serviceName: azure-testapp
+          servicePort: 80
