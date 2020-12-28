@@ -5,7 +5,7 @@ pipeline {
   }
   environment {
     ACR_URL = 'amircontainerregistry.azurecr.io'
-    CONTAINER_IMAGE_NAME = ''
+    CONTAINER_IMAGE_NAME = '12345'
   }
   parameters {
     choice(name: 'BuildOptions', choices: ['Only on app files changes', 'Force', 'Skip'], description: 'Build options')
@@ -33,8 +33,10 @@ pipeline {
     stage("deploy") {
       steps {
         script {
+          echo "deploying image ${CONTAINER_IMAGE_NAME}"
+          
           if (params.ManualDeployImage != '')
-            env.CONTAINER_IMAGE_NAME = params.ManualDeployImage
+            $CONTAINER_IMAGE_NAME = params.ManualDeployImage
           
           echo "deploying image ${CONTAINER_IMAGE_NAME}"
           
