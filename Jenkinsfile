@@ -11,17 +11,32 @@ pipeline {
     choice(name: 'BuildOptions', choices: ['Only if git changes occured', 'Force', 'Skip'], description: 'Build options')
     string(name: 'ManualDeployImage', defaultValue: '', description: 'Manually deploy image name (leave blank to skip deploy)')
   }
+  def RelevantChangesFound() {
+    def changeLogSets = currentBuild.changeSets
+    for (int i = 0; i < changeLogSets.size(); i++) {
+        def entries = changeLogSets[i].items
+        for (int j = 0; j < entries.length; j++) {
+            def entry = entries[j]
+            echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
+            /*def files = new ArrayList(entry.affectedFiles)
+            for (int k = 0; k < files.size(); k++) {
+                def file = files[k]
+                echo "  ${file.editType.name} ${file.path}"
+            }*/
+        }
+    }
+    return false;
+  }
   stages {
     stage("build") {
       when {
         expression {
           params.BuildOptions == 'Force' || 
-            (params.BuildOptions == 'Only if git changes occured')
+            (params.BuildOptions == 'Only if git changes occured' && RelevantChangesFound())
         }
       }
       steps {      
         script {
-          println(currentBuild.changeSets)
           CONTAINER_IMAGE_NAME = "${ACR_URL}/stable/restapi:${BUILD_TIMESTAMP}"
           echo "building image ${CONTAINER_IMAGE_NAME}"
           /*withCredentials([usernamePassword(credentialsId: 'ACR', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
