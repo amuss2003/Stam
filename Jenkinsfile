@@ -36,7 +36,7 @@ pipeline {
           echo "deploying image ${CONTAINER_IMAGE_NAME}"
           
           //if (params.ManualDeployImage != '')
-          ${CONTAINER_IMAGE_NAME} = params.ManualDeployImage
+          env.CONTAINER_IMAGE_NAME = params.ManualDeployImage
           
           echo "deploying image ${CONTAINER_IMAGE_NAME}"
           
