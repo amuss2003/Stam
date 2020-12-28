@@ -26,7 +26,7 @@ spec:
         image: ${CONTAINER_IMAGE_NAME}
         env:
         - name: TotalForecasts
-          value: 3
+          value: 10
         imagePullPolicy: Always
         resources:
           requests:
