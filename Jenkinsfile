@@ -53,7 +53,7 @@ pipeline {
     stage("deploy") {
       when {
         expression {
-          !env.CONTAINER_IMAGE_NAME || params.ManualDeployImage != ''
+          env.CONTAINER_IMAGE_NAME || params.ManualDeployImage != ''
         }
       }
       steps {
