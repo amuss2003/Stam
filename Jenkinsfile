@@ -24,7 +24,7 @@ pipeline {
   }
   environment {
     ACR_URL = 'amircontainerregistry.azurecr.io'
-    CONTAINER_IMAGE_NAME = 'NoImage'
+    //CONTAINER_IMAGE_NAME = 'NoImage'
   }
   parameters {
     choice(name: 'BuildOptions', choices: ['Only if git changes occured', 'Force', 'Skip'], description: 'Build options')
@@ -40,7 +40,7 @@ pipeline {
       }
       steps {      
         script {
-          CONTAINER_IMAGE_NAME = "${ACR_URL}/stable/restapi:${BUILD_TIMESTAMP}"
+          env.CONTAINER_IMAGE_NAME = "${ACR_URL}/stable/restapi:${BUILD_TIMESTAMP}"
           echo "building image ${CONTAINER_IMAGE_NAME}"
           /*withCredentials([usernamePassword(credentialsId: 'ACR', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASSWORD')]) {
             sh "docker login -u $ACR_USER -p $ACR_PASSWORD https://${ACR_URL}"
