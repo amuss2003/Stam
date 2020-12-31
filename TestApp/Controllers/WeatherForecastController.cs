@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using StackExchange.Redis;
 
 namespace TestApp.Controllers
 {
@@ -11,8 +12,10 @@ namespace TestApp.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        public static int TotalCount = Convert.ToInt32(Environment.GetEnvironmentVariable("TotalForecasts") ?? "20");
-        
+        public int TotalCount { get; private set; }
+
+        private readonly ConnectionMultiplexer muxer = ConnectionMultiplexer.Connect("redis-master.redis:6379,password=Fke53qee");
+
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -29,6 +32,9 @@ namespace TestApp.Controllers
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
+            IDatabase conn = muxer.GetDatabase();
+            var cachedTotalCount = conn.StringGet("totalcount");
+            TotalCount = Convert.ToInt32(cachedTotalCount.HasValue ? cachedTotalCount.ToString() : Environment.GetEnvironmentVariable("TotalForecasts") ?? "20");
             return Enumerable.Range(1, TotalCount).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
@@ -36,6 +42,7 @@ namespace TestApp.Controllers
                 Summary = Summaries[rng.Next(Summaries.Length)]
             })
             .ToArray();
+            
         }
     }
 }

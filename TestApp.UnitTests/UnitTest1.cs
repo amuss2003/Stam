@@ -15,9 +15,9 @@ namespace TestApp.UnitTests
         [Test]
         public void Test1()
         {
-            Console.WriteLine("Test is running");
-            var weatherData = new WeatherForecastController(null).Get();
-            Assert.IsTrue(weatherData.Count() == WeatherForecastController.TotalCount);
+            var controller = new WeatherForecastController(null);
+            var weatherData = controller.Get();
+            Assert.IsTrue(weatherData.Count() == controller.TotalCount);
         }
     }
 }
