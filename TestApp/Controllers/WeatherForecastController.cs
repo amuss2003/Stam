@@ -37,7 +37,7 @@ namespace TestApp.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public List<WeatherForecast> Get()
         {
             if (TotalCount == 0)
                 TotalCount = GetTotalCount();
@@ -48,7 +48,7 @@ namespace TestApp.Controllers
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 50),
                 Summary = Summaries[rng.Next(Summaries.Length)]
-            });
+            }).ToList();
 
             if (RedisDb.IsValueCreated)
             {
