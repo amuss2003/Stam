@@ -53,9 +53,12 @@ namespace TestApp.Controllers
             if (RedisDb.IsValueCreated)
             {
                 foreach (var day in forecast)
+                {
                     RedisDb.Value.StringSet(day.Date.ToString("yyyy-MM-dd"), JsonSerializer.Serialize(day));
+                    RedisDb.Value.SortedSetAdd("temps3", new RedisValue(day.Date.ToString("yyyy-MM-dd")), day.TemperatureC);
+                }
 
-                RedisDb.Value.SortedSetAdd("temps2", forecast.Select(f => new SortedSetEntry(new RedisValue(f.Date.ToString("yyyy-MM-dd")), f.TemperatureC)).ToArray());
+                
             }
 
             return forecast;
