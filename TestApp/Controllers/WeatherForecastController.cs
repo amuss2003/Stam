@@ -56,7 +56,7 @@ namespace TestApp.Controllers
                 {
                     RedisDb.Value.StringSet(day.Date.ToString("yyyy-MM-dd"), JsonSerializer.Serialize(day));
                     RedisDb.Value.SortedSetAdd("temps3", new RedisValue(day.Date.ToString("yyyy-MM-dd")), day.TemperatureC);
-                    RedisDb.Value.StringSet("log" + DateTime.Now.Ticks, day.TemperatureC);
+                    RedisDb.Value.SortedSetAdd("logs", new RedisValue("log-" + DateTime.Now.Ticks), day.TemperatureC);
                 }
 
                 
