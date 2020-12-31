@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using StackExchange.Redis;
 
 namespace TestApp.Controllers
@@ -12,9 +11,10 @@ namespace TestApp.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        public int TotalCount { get; private set; }
+        public int TotalCount { get; set; }
 
-        private readonly ConnectionMultiplexer muxer = ConnectionMultiplexer.Connect("redis-master.redis:6379,password=Fke53qee");
+        private Lazy<IDatabase> redisDb = new Lazy<IDatabase>(() => 
+            ConnectionMultiplexer.Connect("redis-master.redis:6379,password=Fke53qee").GetDatabase());
 
         private static readonly string[] Summaries = new[]
         {
@@ -28,21 +28,26 @@ namespace TestApp.Controllers
             _logger = logger;
         }
 
+        private int GetTotalCount()
+        {
+            var cachedTotalCount = redisDb.Value.StringGet("totalcount");
+            var count = Convert.ToInt32(cachedTotalCount.HasValue ? cachedTotalCount.ToString() : Environment.GetEnvironmentVariable("TotalForecasts") ?? "20");
+            return count;
+        }
+
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
+            if (TotalCount == 0)
+                TotalCount = GetTotalCount();
+            
             var rng = new Random();
-            IDatabase conn = muxer.GetDatabase();
-            var cachedTotalCount = conn.StringGet("totalcount");
-            TotalCount = Convert.ToInt32(cachedTotalCount.HasValue ? cachedTotalCount.ToString() : Environment.GetEnvironmentVariable("TotalForecasts") ?? "20");
             return Enumerable.Range(1, TotalCount).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 50),
                 Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
-            
+            });
         }
     }
 }
