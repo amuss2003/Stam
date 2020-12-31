@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using StackExchange.Redis;
+using System.Text.Json;
 
 namespace TestApp.Controllers
 {
@@ -13,7 +14,7 @@ namespace TestApp.Controllers
     {
         public int TotalCount { get; set; }
 
-        private Lazy<IDatabase> redisDb = new Lazy<IDatabase>(() => 
+        private static readonly Lazy<IDatabase> RedisDb = new Lazy<IDatabase>(() => 
             ConnectionMultiplexer.Connect("redis-master.redis:6379,password=Fke53qee").GetDatabase());
 
         private static readonly string[] Summaries = new[]
@@ -30,7 +31,7 @@ namespace TestApp.Controllers
 
         private int GetTotalCount()
         {
-            var cachedTotalCount = redisDb.Value.StringGet("totalcount");
+            var cachedTotalCount = RedisDb.Value.StringGet("totalcount");
             var count = Convert.ToInt32(cachedTotalCount.HasValue ? cachedTotalCount.ToString() : Environment.GetEnvironmentVariable("TotalForecasts") ?? "20");
             return count;
         }
@@ -42,12 +43,22 @@ namespace TestApp.Controllers
                 TotalCount = GetTotalCount();
             
             var rng = new Random();
-            return Enumerable.Range(1, TotalCount).Select(index => new WeatherForecast
+            var forecast = Enumerable.Range(1, TotalCount).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 50),
                 Summary = Summaries[rng.Next(Summaries.Length)]
             });
+
+            if (RedisDb.IsValueCreated)
+            {
+                foreach (var day in forecast)
+                    RedisDb.Value.StringSet(day.Date.ToString("yyyy-MM-dd"), JsonSerializer.Serialize(day));
+
+                RedisDb.Value.SortedSetAdd("temps", forecast.Select(f => new SortedSetEntry(f.Date.ToString("yyyy-MM-dd"), f.TemperatureC)).ToArray());
+            }
+
+            return forecast;
         }
     }
 }
